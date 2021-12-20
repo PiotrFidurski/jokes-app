@@ -20,7 +20,7 @@ export default function JokeRoute() {
 
   return (
     <div>
-      <p>Here's your hilarious j oke:</p>
+      <p>Here's your hilarious j😆oke:</p>
       <p>{data.joke.content}</p>
       <Link to=".">{data.joke.name} Permalink</Link>
     </div>
