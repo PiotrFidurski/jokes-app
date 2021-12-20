@@ -7,7 +7,7 @@ import {
   useSearchParams,
 } from "remix";
 import { db } from "~/utils/db.server";
-import { createUserSession, login } from "~/utils/session.server";
+import { createUserSession, login, register } from "~/utils/session.server";
 import stylesUrl from "../styles/login.css";
 
 export const links: LinksFunction = () => {
@@ -71,10 +71,10 @@ export const action: ActionFunction = async ({ request }) => {
       const user = await login({ username, password });
 
       if (!user) {
-        return {
+        return badRequest({
           fields,
           formError: `Username/Password combination is incorrect`,
-        };
+        });
       }
       return createUserSession(user.id, redirectTo);
     }
@@ -88,12 +88,14 @@ export const action: ActionFunction = async ({ request }) => {
           formError: `User with username ${username} already exists`,
         });
       }
-      // create the user
-      // create their session and redirect to /jokes
-      return badRequest({
-        fields,
-        formError: "Not implemented",
-      });
+      const user = await register({ username, password });
+      if (!user) {
+        return badRequest({
+          fields,
+          formError: `Something went wrong trying to create a new user.`,
+        });
+      }
+      return createUserSession(user.id, redirectTo);
     }
     default: {
       return badRequest({
