@@ -1,17 +1,18 @@
-import {
-  ActionFunction,
-  json,
-  Link,
-  LinksFunction,
-  useActionData,
-  useSearchParams,
-} from "remix";
+import type { ActionFunction, LinksFunction, MetaFunction } from "remix";
+import { json, Link, useActionData, useSearchParams } from "remix";
 import { db } from "~/utils/db.server";
 import { createUserSession, login, register } from "~/utils/session.server";
 import stylesUrl from "../styles/login.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
+};
+
+export const meta: MetaFunction = () => {
+  return {
+    title: "Remix Jokes | Login",
+    description: "Login to submit your own jokes to Remix Jokes!",
+  };
 };
 
 function validateUsername(username: unknown) {
@@ -69,7 +70,6 @@ export const action: ActionFunction = async ({ request }) => {
   switch (loginType) {
     case "login": {
       const user = await login({ username, password });
-
       if (!user) {
         return badRequest({
           fields,
@@ -108,9 +108,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Login() {
   const actionData = useActionData<ActionData>();
-
   const [searchParams] = useSearchParams();
-
   return (
     <div className="container">
       <div className="content" data-light="">
